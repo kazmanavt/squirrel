@@ -1,8 +1,8 @@
 # ALGO_VFUZ1
 
 OBJS = $(subst .c,.o,$(wildcard *.c))
-CFLAGS +=  -Ilibfuzzy -m32
-LDFLAGS += -lm -lstdc++ -lfuzzylite  -L/usr/local/lib
+CFLAGS += -Ilibfuzzy -m32 
+LDFLAGS += -m32 -lm -lstdc++ -lfuzzylite  -L/usr/local/lib
 LIB = libfuzzy/libfuzzy.o
 
 .PHONY: $(LIB) clean

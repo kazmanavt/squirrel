@@ -4,6 +4,7 @@
 #include <string.h>
 #include <fl/Headers.h>
 #include <fl/imex/FisImporter.h>
+#include <fl/variable/InputVariable.h>
 #include "fuzz1.h"
 
 
@@ -79,7 +80,7 @@ peng->engine=engine = importer->fromString(reader.str());
 
    for(n=0; n< numOfVals; n++)     
     {
-  ((fl::InputVariable*)(peng->fuzVars[n]))->setInput(arrayOfVal[n]);
+  ((fl::InputVariable*)(peng->fuzVars[n]))->setValue(arrayOfVal[n]);
     }
    }
 /* *************************************************************************************
@@ -91,7 +92,8 @@ peng->engine=engine = importer->fromString(reader.str());
   engine->process(); 
   
   fl::OutputVariable*  tip= engine->getOutputVariable("output1"); // magic name for output variabvle:)
-  fl::scalar obtained = tip->defuzzify();
+  tip->defuzzify();
+  fl::scalar obtained = tip->getValue(); 
   // std::cout << obtained  << std::endl;
      return double(obtained);
    }
