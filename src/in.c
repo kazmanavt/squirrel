@@ -65,7 +65,11 @@ static void     term_handler( int signum, siginfo_t *info, void *data )
   run = false;
 }
 
-
+// FIXME: faked net exchange
+double ( *RAW_DATA ) [17];
+size_t NUM;
+int load_fake_signals();
+/* ++ */
 
 /*!
   Вызов предназначен для инициализации [подсистемы приема технологических сигналов](@ref datain).
@@ -92,13 +96,15 @@ int sqi_run( const char **signals, int num_signals, long tic )
 
 
   //! Инициализация соединения.
-  int s = -1;
-  const char *host = NULL, *port = NULL;
-  EC_NULL( host = jcf_s( NULL, ".iis_host" ) );
-  EC_NULL( port = jcf_s( NULL, ".iis_port" ) );
+  // int s = -1;
+  // const char *host = NULL, *port = NULL;
+  // EC_NULL( host = jcf_s( NULL, ".iis_host" ) );
+  // EC_NULL( port = jcf_s( NULL, ".iis_port" ) );
 
-  EC_NEG1( s = sn_stream_socket( NULL, NULL ) );
-  EC_NEG1( sn_connect( s, host, port ) );
+  // EC_NEG1( s = sn_stream_socket( NULL, NULL ) );
+  // EC_NEG1( sn_connect( s, host, port ) );
+  // FIXME: faked net exchange
+  EC_NEG1( load_fake_signals() );  
 
   int *proto_codes = NULL;
   EC_NULL( proto_codes = sqp_handshake( s, signals, num_signals ) );
@@ -138,7 +144,10 @@ int sqi_run( const char **signals, int num_signals, long tic )
   while ( run ) {
     int rc = 1;
     while ( rc ) {
-      EC_NEG1( rc = sqp_recv( s, data, &N ) );
+      // EC_NEG1( rc = sqp_recv( s, data, &N ) );
+
+      // FIXME: faked net exchange
+      read_fake_signals(&data, &N);
 
       for ( int i = 0; i < N; i++ ) {
         EC_NEG1( sqr_write1( &data[i], map[data[i].code] ) );
@@ -164,8 +173,6 @@ int sqi_run( const char **signals, int num_signals, long tic )
     EC_RC( clock_nanosleep( CONFIGURED_CLOCK, TIMER_ABSTIME, &ts_cycle, NULL ) );
   }
 
-
-
   sqr_mb_release();
   return 0;
   EC_CLEAN_SECTION(
@@ -179,4 +186,69 @@ int sqi_run( const char **signals, int num_signals, long tic )
       fl_log_ec();
       return 1;
     );
+}
+
+
+/* TODO: remove it naher */
+
+int load_fake_signals() {
+  FILE* IN;
+  EC_NULL( IN = fopen ( "test.dlm", "r" ) );
+
+  size_t bs = 1024;
+  double ( *a ) [17], dval;
+  size_t n = 0, N = bs;
+  EC_NULL( a = malloc ( N * 17 * sizeof ( double ) ) );
+
+  while ( fscanf ( IN, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+                   &a[n][0],  &a[n][1],  &a[n][2],  &a[n][3],
+                   &a[n][4],  &a[n][5],  &a[n][6],  &a[n][7],
+                   &a[n][8],  &a[n][9],  &a[n][10], &a[n][11],
+                   &a[n][12], &a[n][13], &a[n][14], &a[n][15], &a[n][16] ) == 17 ) {
+
+    ++n;
+    if ( n == N ) {
+      EC_REALLOC( a, ( N + bs ) * 17 * sizeof ( double ) );
+      N += bs;
+    }
+  }
+  fclose(IN);
+
+  i = step % n;
+  EC_REALLOC( a, n * 17 * sizeof ( double ) );
+
+  RAW_DATA = a;
+  NUM = n;
+  return 0;
+
+  EC_CLEAN_SECTION(
+    if ( IN != NILL ) fclose( IN );
+
+      fl_log( "INF> input task: abnormal termination\n" );
+      // ec_print("tmp");
+      fl_log_ec();
+      return -1;
+    );
+}
+
+
+int read_signal ( SQPsignal_t* buff, int * num )
+{
+  static int step = 0;
+  step = step % NUM;
+
+  for ( int i = 0; i < 16; i++ ) {
+    buff[i].trust = 0.0;
+    buff[i].val = a[step][i + 1];
+    buff[i].ts.sec = ( uint_fast32_t ) ( a[i][0] );
+    dval = ( ( ( double ) a[i][0] - ( double ) buff[i].ts.sec ) * 1000. );
+    buff[i].ts.usec = ( uint_fast32_t ) ( dval + 0.5 );
+    buff[i].code = i;
+    // printf ( "----fake read  K=%d Time=%d s(%d ms) Cod=%d %f Trust=%f \n", i, buff[i].ts.sec, buff[i].ts.usec,
+    //          buff[i].code, buff[i].val, buff[i].trust );
+
+  }
+
+  *num = 16;
+  return 0;
 }
