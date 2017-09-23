@@ -42,7 +42,7 @@
 
 
 #include <stdlib.h>
-// #include <stdio.h>
+#include <stdio.h>
 #include <time.h>
 #include <string.h>
 // #include <math.h>
@@ -69,6 +69,7 @@ static void     term_handler( int signum, siginfo_t *info, void *data )
 double ( *RAW_DATA ) [17];
 size_t NUM;
 int load_fake_signals();
+int read_fake_signals ( SQPsignal_t*, int * );
 /* ++ */
 
 /*!
@@ -107,10 +108,12 @@ int sqi_run( const char **signals, int num_signals, long tic )
   EC_NEG1( load_fake_signals() );  
 
   int *proto_codes = NULL;
-  EC_NULL( proto_codes = sqp_handshake( s, signals, num_signals ) );
+  // EC_NULL( proto_codes = sqp_handshake( s, signals, num_signals ) );
+  EC_NULL( proto_codes  = malloc( 16* sizeof(int) ) );
   int max_proto_code = -1;
   // find max code value for technological signal
   for ( int i = 0; i < num_signals; i++ ) {
+    proto_codes[i] = i;
     if ( proto_codes[i] > max_proto_code ) {
       max_proto_code = proto_codes[i];
     }
@@ -179,10 +182,10 @@ int sqi_run( const char **signals, int num_signals, long tic )
     if ( map != NULL ) free( map );
     sqr_run( 1 );
     sqr_mb_release();
-    if ( s != -1 ) close( s );
+    //if ( s != -1 ) close( s );
 
       fl_log( "INF> input task: abnormal termination\n" );
-      // ec_print("tmp");
+      ec_print("tmp");
       fl_log_ec();
       return 1;
     );
@@ -214,7 +217,6 @@ int load_fake_signals() {
   }
   fclose(IN);
 
-  i = step % n;
   EC_REALLOC( a, n * 17 * sizeof ( double ) );
 
   RAW_DATA = a;
@@ -222,7 +224,7 @@ int load_fake_signals() {
   return 0;
 
   EC_CLEAN_SECTION(
-    if ( IN != NILL ) fclose( IN );
+    if ( IN != NULL ) fclose( IN );
 
       fl_log( "INF> input task: abnormal termination\n" );
       // ec_print("tmp");
@@ -232,20 +234,22 @@ int load_fake_signals() {
 }
 
 
-int read_signal ( SQPsignal_t* buff, int * num )
+int read_fake_signals ( SQPsignal_t* buff, int * num )
 {
   static int step = 0;
   step = step % NUM;
 
+  struct timespec  ts;
+  clock_gettime( CONFIGURED_CLOCK, &ts );
+
   for ( int i = 0; i < 16; i++ ) {
     buff[i].trust = 0.0;
-    buff[i].val = a[step][i + 1];
-    buff[i].ts.sec = ( uint_fast32_t ) ( a[i][0] );
-    dval = ( ( ( double ) a[i][0] - ( double ) buff[i].ts.sec ) * 1000. );
-    buff[i].ts.usec = ( uint_fast32_t ) ( dval + 0.5 );
+    buff[i].val = RAW_DATA[step][i + 1];
+    buff[i].ts.sec = ts.tv_sec;
+    buff[i].ts.usec = ( uint_fast32_t ) ( ts.tv_nsec / 1000L );
     buff[i].code = i;
-    // printf ( "----fake read  K=%d Time=%d s(%d ms) Cod=%d %f Trust=%f \n", i, buff[i].ts.sec, buff[i].ts.usec,
-    //          buff[i].code, buff[i].val, buff[i].trust );
+    printf ( "----fake read  K=%d Time=%d s(%d ms) Cod=%d %f Trust=%f \n", i, buff[i].ts.sec, buff[i].ts.usec,
+            buff[i].code, buff[i].val, buff[i].trust );
 
   }
 

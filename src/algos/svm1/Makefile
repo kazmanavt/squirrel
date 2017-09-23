@@ -1,12 +1,12 @@
 # ALGO_SVM1
 .EXPORT_ALL_VARIABLES:
 
-LDFLAGS += -lm -lstdc++
+LDFLAGS += -lm -Wl,-m -Wl,elf_i386 -m32 -fPIC  -lstdc++
 
 LIBSVM=libsvm
 CC = gcc
 OBJS = $(subst .c,.o,$(wildcard *.c)) 
-CFLAGS += -I.  -Ilibsvm  -Wall -g
+CFLAGS += -I.  -Ilibsvm  -Wall -g -m32 -fPIC
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<

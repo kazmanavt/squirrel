@@ -123,7 +123,7 @@
 
   @~ @attention internal docs
 */
-#define FL_MSGS 10000L
+#define FL_MSGS 100L
 
 /*!
   @internal
@@ -692,7 +692,8 @@ int fl_init( void )
 
   EC_CLEAN_SECTION(
     fastlog_release();
-    return 1;
+    ec_print("Fastlog system init failed");
+    return -1;
   );
 }
 

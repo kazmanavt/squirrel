@@ -218,6 +218,13 @@
 #include <worker.h>
 
 
+// FIXME: ugly hack from https://stackoverflow.com/questions/920500/what-is-the-purpose-of-cxa-pure-virtual
+void __cxa_pure_virtual() {
+  printf("__cxa_pure_virtual:\n\tugly hack from https://stackoverflow.com/questions/920500/what-is-the-purpose-of-cxa-pure-virtual");
+}
+
+
+
 /*!
   @short выполняет сортировку и удаление дубликатов из массива c-строк.
 */
