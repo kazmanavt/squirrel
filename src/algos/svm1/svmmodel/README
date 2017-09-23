@@ -1,0 +1,4 @@
+#for 191 object
+./svmmodel -c 0.031250 -g 8.000000 -s 2 -t 2 -n 0.025
+
+

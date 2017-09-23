@@ -1,0 +1,16 @@
+C21VPK 0   min=0.0 max=100. delta=0.1  accuracy=0.1
+C21VPNG 1    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKTG21DGDK 2    min=0.0 max=100. delta=1.0 accuracy=0.1
+C21DOAN 3    min=0.0 max=100. delta=1.0 accuracy=0.1
+C21PGDK 4    min=0.0 max=100. delta=1.0 accuracy=0.1
+CDODSH_1 5    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKPV11 6    min=0.0 max=100. delta=2.0  accuracy=0.1
+CKPV12 7    min=0.0 max=100. delta=2.0  accuracy=0.1
+CKPV13 8    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKPO11 9    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKPO12 10    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKPO13 11    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKPO14 12    min=0.0 max=100. delta=1.0 accuracy=0.1
+CKTG11 13    min=0.0 max=100. delta=10.0 accuracy=0.1
+CKTG12 14    min=0.0 max=100. delta=10.0 accuracy=0.1
+CKTG13 15    min=0.0 max=100. delta=1.0 accuracy=0.1

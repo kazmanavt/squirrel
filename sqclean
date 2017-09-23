@@ -1,0 +1,6 @@
+cd /dev/shm
+rm -f sem.sq_main.sem
+rm -f sq_rail.shm
+rm -f SVM*
+pkill -9 squirrel
+rm -f timing*.txt

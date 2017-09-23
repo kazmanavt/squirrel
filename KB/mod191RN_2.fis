@@ -1,0 +1,149 @@
+[System]
+Name='mod191RN'
+Type='mamdani'
+Version=2.0
+NumInputs=16
+NumOutputs=1
+NumRules=1
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='mom'
+
+[Input1]
+Name='C21VPK'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input2]
+Name='C21VPNG'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.3]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input3]
+Name='CKTG21DGDK'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.3]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input4]
+Name='C21DOAN'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input5]
+Name='C21PGDK'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input6]
+Name='CDODSH_1'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input7]
+Name='CKPV11'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input8]
+Name='CKPV12'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input9]
+Name='CKPV13'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input10]
+Name='CKPO11'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input11]
+Name='CKPO12'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input12]
+Name='CKPO13'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input13]
+Name='CKPO14'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input14]
+Name='CKTG11'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input15]
+Name='CKTG12'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Input16]
+Name='CKTG13'
+Range=[-1 1]
+NumMFs=3
+MF1='01':'trimf',[-1.12 -1 -0.05]
+MF2='10':'trimf',[-0.1 0 0.1]
+MF3='11':'trimf',[0.05 1 1.12]
+
+[Output1]
+Name='output1'
+Range=[0 1]
+NumMFs=1
+MF1='alarm':'trimf',[0 1 2]
+
+[Rules]
+1 0 0 0 0 0 0 1 1 0 0 0 0 3 3 0, 1 (1) : 1

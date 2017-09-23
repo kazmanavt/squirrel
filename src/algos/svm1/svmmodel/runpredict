@@ -1,0 +1,4 @@
+#params for 191 object with in time model iand big window=400 lags
+#computed only once
+./svmmodel -c 0.031250 -g  8 -n 0.0025 -s 2 -t 2
+

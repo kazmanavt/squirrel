@@ -1,0 +1,5 @@
+all programs musr be run with parameters obtained from svm_grid
+i.e 
+
+svmmodel -g 8 -c 0.03125
+
