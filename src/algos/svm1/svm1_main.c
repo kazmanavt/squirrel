@@ -87,6 +87,7 @@ int run ( SVMAlgoDescriptor_t* psvm )
   size_t realread;
   int updateflug = 0; /*  will be non ther if the model was computed at least one time */
 
+      // fprintf ( stderr, "SVM1 starting run\n");
 
   if ( psvm->useStaticModel == 0 ) {
     if ( psvm->shmid == -1 ) {
@@ -114,6 +115,7 @@ int run ( SVMAlgoDescriptor_t* psvm )
   if ( ( realread = sqr_read ( psvm->svm1buf, NULL ) ) == 0 )
     return 0;  /* nothing to do no data */
 
+      fprintf ( stderr, "SVM1 data read %d\n", realread);
 #else
   realread = svm_fake_read ( "testgood.dlm", psvm->svm1buf, psvm->k );
 #endif

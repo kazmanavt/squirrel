@@ -21,8 +21,8 @@ INTERNAL_OBJS = $(filter-out $(EXT_OBJS),$(OBJS))
 #       fastlog.o \
 #       kz_erch.o
 
-CFLAGS += -DCONFIGURED_CLOCK=CLOCK_REALTIME -fPIC -m32
-LDFLAGS += -fPIC -rdynamic -lrt -lpthread -ldl -lm -m32 -Wl,-m -Wl,elf_i386  -lstdc++
+CFLAGS += -m32 -fPIC -DCONFIGURED_CLOCK=CLOCK_REALTIME
+LDFLAGS += -m32 -Wl,-m -Wl,elf_i386  -fPIC -rdynamic -lrt -lpthread -ldl -lm
 
 .PHONY: clean
 

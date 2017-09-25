@@ -150,7 +150,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
       // EC_NEG1( rc = sqp_recv( s, data, &N ) );
 
       // FIXME: faked net exchange
-      read_fake_signals(&data, &N);
+      read_fake_signals(data, &N);
 
       for ( int i = 0; i < N; i++ ) {
         EC_NEG1( sqr_write1( &data[i], map[data[i].code] ) );
@@ -248,8 +248,8 @@ int read_fake_signals ( SQPsignal_t* buff, int * num )
     buff[i].ts.sec = ts.tv_sec;
     buff[i].ts.usec = ( uint_fast32_t ) ( ts.tv_nsec / 1000L );
     buff[i].code = i;
-    printf ( "----fake read  K=%d Time=%d s(%d ms) Cod=%d %f Trust=%f \n", i, buff[i].ts.sec, buff[i].ts.usec,
-            buff[i].code, buff[i].val, buff[i].trust );
+//    printf ( "----fake read  K=%d Time=%d s(%d ms) Cod=%d %f Trust=%f \n", i, buff[i].ts.sec, buff[i].ts.usec,
+//            buff[i].code, buff[i].val, buff[i].trust );
 
   }
 

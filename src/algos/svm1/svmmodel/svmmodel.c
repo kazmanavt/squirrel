@@ -196,6 +196,11 @@ int main( int argc, char *argv[] )
   parse_command_line( argc, argv );
 
 
+  if ( fl_init() == -1 ) {
+     fprintf(stderr, "Failed to init logger\n");
+     exit(1);
+  }
+
   if ( ( psqc = sq_rail_init( "svm1" ) ) == 0 ) {
     fprintf( stderr, "Error in nit rail  \n" );
     exit( 1 );
@@ -224,7 +229,7 @@ int main( int argc, char *argv[] )
     do {
       /* reset the input signal buffer position  to the haad of the signal's  data */
 
-      //   fprintf(stderr,"Start data collection for window....%d \n",i);
+         fprintf(stderr,"Start data collection for window....%d \n",i);
       if ( i > 0 )
         /* copy previous sigbuf because updated will be only signal that changed science last update */
       { memcpy( svm1buf[i], svm2buf[i - 1], sizeof( SQPsignal_t ) * ( sig_len ) ); }
@@ -334,6 +339,7 @@ int main( int argc, char *argv[] )
     {
       /* notify that model is ready */
       int flg = 1;
+      fprintf(stderr,"Model is rteady \n");
       memcpy( &atomicBuffer[serlizeSize.sz_total - sizeof( int )], &flg, sizeof( int ) );
 
       /* make atomic write */

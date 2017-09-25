@@ -3,8 +3,8 @@
 
 DIRS = $(filter-out .,$(shell find . -maxdepth 1 -type d))
 
-CFLAGS += -fpic -I../..
-LDFLAGS += -fpic
+CFLAGS += -fPIC -I../..
+LDFLAGS += -fPIC
 
 .PHONY: $(DIRS) clean
 

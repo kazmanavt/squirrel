@@ -1,11 +1,11 @@
 # ALGO_SVM1
 
-LDFLAGS= -fpic -lm -lstdc++ -lrt -lpthread -ldl
+LDFLAGS= -m32 -fPIC -lm -lstdc++ -lrt -lpthread -ldl
 
 LIBSVM=../libsvm
 CC = gcc
 OBJS = $(subst .c,.o,$(wildcard *.c)) 
-CFLAGS += -O0 -fpic -I. -I.. -I../.. -I../../.. -I$(LIBSVM) -Wall -g -std=c99 -D_SVID_SOURCE
+CFLAGS += -m32 -O0 -fPIC -I. -I.. -I../.. -I../../.. -I$(LIBSVM) -Wall -g -std=c99 -D_SVID_SOURCE
 SQDIR=../../..
 
 %.o: %.c
@@ -38,4 +38,4 @@ $(LIBSVM)/libsvm.o:
 
 
 clean:
-	@rm -f *.o
+	@rm -f *.o $(TARGET)
