@@ -42,7 +42,7 @@
 
 
 #include <stdlib.h>
-#include <stdio.h>
+#include <stdio.h> // FIXME: faked net exchange
 #include <time.h>
 #include <string.h>
 // #include <math.h>
@@ -95,7 +95,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
   EC_NEG1( correction = sq_calibrate( "input task", 1000, 100000 ) );
 
 
-
+  // FIXME: faked net exchange
   //! Инициализация соединения.
   // int s = -1;
   // const char *host = NULL, *port = NULL;
@@ -109,11 +109,11 @@ int sqi_run( const char **signals, int num_signals, long tic )
 
   int *proto_codes = NULL;
   // EC_NULL( proto_codes = sqp_handshake( s, signals, num_signals ) );
-  EC_NULL( proto_codes  = malloc( 16* sizeof(int) ) );
+  EC_NULL( proto_codes  = malloc( 16* sizeof(int) ) );// FIXME: faked net exchange
   int max_proto_code = -1;
   // find max code value for technological signal
   for ( int i = 0; i < num_signals; i++ ) {
-    proto_codes[i] = i;
+    proto_codes[i] = i;// FIXME: faked net exchange
     if ( proto_codes[i] > max_proto_code ) {
       max_proto_code = proto_codes[i];
     }
@@ -134,7 +134,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
   }
 
   sqr_run( 1 );
-
+  
 
   SQPsignal_t *data;
   int32_t N = num_signals * 2;
@@ -182,7 +182,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
     if ( map != NULL ) free( map );
     sqr_run( 1 );
     sqr_mb_release();
-    //if ( s != -1 ) close( s );
+    //if ( s != -1 ) close( s );// FIXME: faked net exchange
 
       fl_log( "INF> input task: abnormal termination\n" );
       ec_print("tmp");
