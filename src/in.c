@@ -135,6 +135,9 @@ int sqi_run( const char **signals, int num_signals, long tic )
 
   sqr_run( 1 );
   
+  printf("---------Input await for others. Kill me with 'kill -CONT %d' ---------------\n", getpid());
+  pause();
+  printf("Yo me running!");
 
   SQPsignal_t *data;
   int32_t N = num_signals * 2;
