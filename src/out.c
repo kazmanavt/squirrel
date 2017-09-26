@@ -60,7 +60,7 @@ int sqo_oorsend ( void* data, size_t len )
   char str[len + 1];
   strncpy ( str, data, len );
   str[len] = '\0';
-  printf ( "%s\n", str );
+  printf ( "Get alarm  %s\n", str );
   // #if SQ_ASYNC == 0
   // #warning !!!! USING SYNCRONOUS OUTPUT !!!!
   //   EC_NEG1 ( write (tosaz, data, len) );
