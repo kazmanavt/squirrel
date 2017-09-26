@@ -70,6 +70,7 @@ double ( *RAW_DATA ) [17];
 size_t NUM;
 int load_fake_signals();
 int read_fake_signals ( SQPsignal_t*, int * );
+static void     wakeup( int signum, siginfo_t *info, void *data ) {}
 /* ++ */
 
 /*!
@@ -84,10 +85,14 @@ int sqi_run( const char **signals, int num_signals, long tic )
   EC_NEG1( sigfillset( &siact.sa_mask ) );
   siact.sa_flags = SA_SIGINFO;
   EC_NEG1( sigaction( SIGTERM, &siact, NULL ) );
+// FIXME: faked net exchange
+  siact.sa_sigaction = wakeup;
+  EC_NEG1( sigaction( SIGUSR1, &siact, NULL ) );
 
   sigset_t mask;
   EC_NEG1( sigemptyset( &mask ) );
   EC_NEG1( sigaddset( &mask, SIGTERM ) );
+  EC_NEG1( sigaddset( &mask, SIGUSR1 ) );  // FIXME: faked net exchange
   EC_NEG1( sigprocmask( SIG_UNBLOCK, &mask, NULL ) );
 
   //! Калибровка часиков.
@@ -135,9 +140,9 @@ int sqi_run( const char **signals, int num_signals, long tic )
 
   sqr_run( 1 );
   
-  printf("---------Input await for others. Kill me with 'kill -CONT %d' ---------------\n", getpid());
+  printf("---------Input await for others. Kill me with 'kill -USR1 %d' ---------------\n", getpid());
   pause();
-  printf("Yo me running!");
+  printf("Yo me running!\n");
 
   SQPsignal_t *data;
   int32_t N = num_signals * 2;
