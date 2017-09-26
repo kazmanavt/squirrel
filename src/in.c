@@ -151,6 +151,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
 
       // FIXME: faked net exchange
       read_fake_signals(data, &N);
+      rc = 0;
 
       for ( int i = 0; i < N; i++ ) {
         EC_NEG1( sqr_write1( &data[i], map[data[i].code] ) );
