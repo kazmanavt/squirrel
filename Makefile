@@ -1,4 +1,5 @@
 # Main squirrel makefile
+
 .EXPORT_ALL_VARIABLES:
 
 CC = gcc
