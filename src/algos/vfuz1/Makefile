@@ -1,9 +1,13 @@
 # ALGO_VFUZ1
+.EXPORT_ALL_VARIABLES:
 
 OBJS = $(subst .c,.o,$(wildcard *.c))
-CFLAGS += -Ilibfuzzy -m32 
-LDFLAGS += -m32 -lm -lstdc++ -lfuzzylite  -L/usr/local/lib
-LIB = libfuzzy/libfuzzy.o
+CFLAGS += -Ilibfuzzy -m32  -fPIC
+LDFLAGS  +=  -Wl,-m -Wl,elf_i386 -m32 -fPIC 
+LIBS += -lstdc++ -lm  -lfuzzylite
+LIB = libfuzzy/libfuzzy.o 
+CC = gcc
+
 
 .PHONY: $(LIB) clean
 
