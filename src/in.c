@@ -68,6 +68,7 @@ static void     term_handler( int signum, siginfo_t *info, void *data )
 // FIXME: faked net exchange
 double ( *RAW_DATA ) [17];
 size_t NUM;
+size_t TM_SHIFT;
 int load_fake_signals();
 int read_fake_signals ( SQPsignal_t*, int * );
 static void     wakeup( int signum, siginfo_t *info, void *data ) {}
@@ -77,9 +78,11 @@ static void     wakeup( int signum, siginfo_t *info, void *data ) {}
   Вызов предназначен для инициализации [подсистемы приема технологических сигналов](@ref datain).
   В ходе вызова выполняются следующие операции.
 */
-int sqi_run( const char **signals, int num_signals, long tic )
+int sqi_run( const char **signals, int num_signals, long tic, bool fake_input )
 {
   struct sigaction siact;
+  int s = -1; //  Сокет
+  uint32_t *map = NULL; // карта связи кодов сигналов на шине с кодами в сети
   memset( &siact, 0, sizeof( siact ) );
   siact.sa_sigaction = term_handler;
   EC_NEG1( sigfillset( &siact.sa_mask ) );
@@ -100,25 +103,27 @@ int sqi_run( const char **signals, int num_signals, long tic )
   EC_NEG1( correction = sq_calibrate( "input task", 1000, 100000 ) );
 
 
-  // FIXME: faked net exchange
   //! Инициализация соединения.
-  // int s = -1;
-  // const char *host = NULL, *port = NULL;
-  // EC_NULL( host = jcf_s( NULL, ".iis_host" ) );
-  // EC_NULL( port = jcf_s( NULL, ".iis_port" ) );
-
-  // EC_NEG1( s = sn_stream_socket( NULL, NULL ) );
-  // EC_NEG1( sn_connect( s, host, port ) );
-  // FIXME: faked net exchange
-  EC_NEG1( load_fake_signals() );  
-
   int *proto_codes = NULL;
-  // EC_NULL( proto_codes = sqp_handshake( s, signals, num_signals ) );
-  EC_NULL( proto_codes  = malloc( 16* sizeof(int) ) );// FIXME: faked net exchange
+  if (!fake_input) {
+    const char *host = NULL, *port = NULL;
+    EC_NULL( host = jcf_s( NULL, ".iis_host" ) );
+    EC_NULL( port = jcf_s( NULL, ".iis_port" ) );
+  
+    EC_NEG1( s = sn_stream_socket( NULL, NULL ) );
+    EC_NEG1( sn_connect( s, host, port ) );
+
+    EC_NULL( proto_codes = sqp_handshake( s, signals, num_signals ) );
+  } else {
+    // FIXME: faked net exchange
+    EC_NEG1( load_fake_signals() );  
+    EC_NULL( proto_codes  = malloc( 16* sizeof(int) ) );// FIXME: faked net exchange
+    for ( int i = 0; i < 16; i++ ) proto_codes[i] = i;// FIXME: faked net exchange
+  }
+
   int max_proto_code = -1;
   // find max code value for technological signal
   for ( int i = 0; i < num_signals; i++ ) {
-    proto_codes[i] = i;// FIXME: faked net exchange
     if ( proto_codes[i] > max_proto_code ) {
       max_proto_code = proto_codes[i];
     }
@@ -128,7 +133,6 @@ int sqi_run( const char **signals, int num_signals, long tic )
   }
 
   //! Связывание кодов сигналов с входными очередями.
-  uint32_t *map = NULL;
   EC_NULL( map = calloc( max_proto_code + 1, sizeof( uint32_t ) ) );
   for ( int i = 0, qid = 0; i < num_signals; i++ ) {
     EC_CHCK( proto_codes[i], -1 );
@@ -140,7 +144,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
 
   sqr_run( 1 );
   
-  printf("---------Input await for others. Kill me with 'kill -USR1 %d' ---------------\n", getpid());
+  printf("---------Input await for others. Kill me with 'sudo kill -USR1 %d' ---------------\n", getpid());
   pause();
   printf("Yo me running!\n");
 
@@ -155,11 +159,13 @@ int sqi_run( const char **signals, int num_signals, long tic )
   while ( run ) {
     int rc = 1;
     while ( rc ) {
-      // EC_NEG1( rc = sqp_recv( s, data, &N ) );
-
-      // FIXME: faked net exchange
-      read_fake_signals(data, &N);
-      rc = 0;
+      if ( ! fake_input ) {
+        EC_NEG1( rc = sqp_recv( s, data, &N ) );
+      } else {
+        // FIXME: faked net exchange
+        read_fake_signals(data, &N);
+        rc = 0;
+      }
 
       for ( int i = 0; i < N; i++ ) {
         EC_NEG1( sqr_write1( &data[i], map[data[i].code] ) );
@@ -191,7 +197,7 @@ int sqi_run( const char **signals, int num_signals, long tic )
     if ( map != NULL ) free( map );
     sqr_run( 1 );
     sqr_mb_release();
-    //if ( s != -1 ) close( s );// FIXME: faked net exchange
+    if ( s != -1 ) close( s );
 
       fl_log( "INF> input task: abnormal termination\n" );
       ec_print("tmp");
@@ -230,12 +236,13 @@ int load_fake_signals() {
 
   RAW_DATA = a;
   NUM = n;
+  TM_SHIFT = RAW_DATA[NUM-1][0] - RAW_DATA[0][0] + 1;
   return 0;
 
   EC_CLEAN_SECTION(
     if ( IN != NULL ) fclose( IN );
 
-      fl_log( "INF> input task: abnormal termination\n" );
+      fl_log( "INF> input task: fake input load failure\n" );
       // ec_print("tmp");
       fl_log_ec();
       return -1;
@@ -243,23 +250,32 @@ int load_fake_signals() {
 }
 
 
-int read_fake_signals ( SQPsignal_t* buff, int * num )
-{
-  static int step = 0;
-  step = step % NUM;
+int read_fake_signals ( SQPsignal_t* buff, int * num ) {
+  static size_t tm_offset = 0;
+  static size_t step = 0;
+  size_t step_c = step % NUM;
 
-  struct timespec  ts;
-  clock_gettime( CONFIGURED_CLOCK, &ts );
+  //struct timespec  ts;
+  //clock_gettime( CONFIGURED_CLOCK, &ts );
+  time_t sec = RAW_DATA[step_c][0];
+  long usec = ( RAW_DATA[step_c][0] - sec ) * 1000000L;
+  sec += tm_offset;
 
   for ( int i = 0; i < 16; i++ ) {
-    buff[i].trust = 0.0;
-    buff[i].val = RAW_DATA[step][i + 1];
-    buff[i].ts.sec = ts.tv_sec;
-    buff[i].ts.usec = ( uint_fast32_t ) ( ts.tv_nsec / 1000L );
     buff[i].code = i;
+    buff[i].val = RAW_DATA[step_c][i + 1];
+    buff[i].trust = 0.0;
+    buff[i].ts.sec = sec;
+    buff[i].ts.usec = usec;
 //    printf ( "----fake read  K=%d Time=%d s(%d ms) Cod=%d %f Trust=%f \n", i, buff[i].ts.sec, buff[i].ts.usec,
 //            buff[i].code, buff[i].val, buff[i].trust );
 
+  }
+
+  ++step;
+  if ( step_c == NUM - 1 ) {
+    tm_offset += TM_SHIFT;
+    printf("Kus'\n");
   }
 
   *num = 16;

@@ -115,11 +115,12 @@ int run ( SVMAlgoDescriptor_t* psvm )
   if ( ( realread = sqr_read ( psvm->svm1buf, NULL ) ) == 0 )
     return 0;  /* nothing to do no data */
 
-      fprintf ( stderr, "SVM1 data read %d\n", realread);
+      //fprintf ( stderr, "SVM1 data read %d\n", realread);
 #else
   realread = svm_fake_read ( "testgood.dlm", psvm->svm1buf, psvm->k );
 #endif
   if ( svm1_dataIsValid ( psvm->svm1buf, psvm->PROBLEM_SIZE_SVM ) == 0 ) {
+      fprintf ( stderr, "invalid \n");
     return 0;  /* no valid data */
   }
   psvm->k++; /* aux counter not really used for algo */

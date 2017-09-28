@@ -815,7 +815,7 @@ static inline
 int sqrp_mb_read( size_t id, size_t offset, void *const buf, size_t len,
                   SQRmbIoFlag_t fl )
 {
-  if ( id >= mb_list.len || offset + len > mb_list.blocks[id].len || *mb_list.blocks[id].valid ) {
+  if ( id >= mb_list.len || offset + len > mb_list.blocks[id].len || *mb_list.blocks[id].valid == 0 ) {
     errno = EINVAL;
     return -1;
   }

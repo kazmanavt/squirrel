@@ -524,6 +524,13 @@ int setup_signals( void )
 */
 int main( int ac, char **av )
 {
+  bool fake_input = false;
+  if ( ac > 1) {
+    if ( strcmp(av[1], "--fake-input") == 0) {
+      fake_input = true;
+    }
+  }
+
   //! Настройка сигналов
   EC_NEG1( setup_signals() );
 
@@ -612,7 +619,7 @@ int main( int ac, char **av )
   EC_NEG1( sq_proc.workers[0].pid = fork() );
   if ( sq_proc.workers[0].pid == 0 ) {
     EC_NEG1( sq_set_cpu( sq_proc.workers[0].cpu, sq_proc.base_prio ) );
-    return sqi_run( desired_signals, num_signals, sq_proc.tic );
+    return sqi_run( desired_signals, num_signals, sq_proc.tic, fake_input );
   }
 
   // wait for input task initializes signal queues

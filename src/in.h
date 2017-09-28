@@ -15,7 +15,7 @@
 */
 
 //! @short запуск задачи приема технологических сигналов
-int sqi_run ( const char** signals, int num_signals, long tic );
+int sqi_run ( const char** signals, int num_signals, long tic, bool fake_input );
 
 //! @}
 #endif // IN_H_
